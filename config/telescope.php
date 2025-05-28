@@ -208,4 +208,18 @@ return [
         Watchers\ScheduleWatcher::class => env('TELESCOPE_SCHEDULE_WATCHER', true),
         Watchers\ViewWatcher::class => env('TELESCOPE_VIEW_WATCHER', true),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Tags for Entries
+    |--------------------------------------------------------------------------
+    |
+    | You may specify custom tags to be attached to every Telescope entry.
+    | 'custom_static_tag' is a string tag, and 'custom_dynamic_tag' is a class
+    | name that will be resolved from the container and its value used as a tag.
+    |
+    */
+    'custom_static_tag' => env('TELESCOPE_CUSTOM_STATIC_TAG', 'service'),
+    'custom_dynamic_tag' => env('TELESCOPE_CUSTOM_DYNAMIC_TAG', 'site_token'),
+    'enabled_in_prod' => env('TELESCOPE_ENABLED_IN_PROD', false),
 ];

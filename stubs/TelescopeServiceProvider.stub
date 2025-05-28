@@ -16,6 +16,22 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     {
         // Telescope::night();
 
+        Telescope::tag(function (IncomingEntry $entry) {
+            $tags = [];
+            $staticTag = config('telescope.custom_static_tag', env('TELESCOPE_CUSTOM_STATIC_TAG'));
+            if ($staticTag) {
+                $tags[] = $staticTag;
+            }
+            $dynamicTagClass = config('telescope.custom_dynamic_tag', env('TELESCOPE_CUSTOM_DYNAMIC_TAG'));
+            if ($dynamicTagClass && class_exists($dynamicTagClass)) {
+                $tag = app($dynamicTagClass);
+                if ($tag !== null) {
+                    $tags[] = $tag;
+                }
+            }
+            return $tags;
+        });
+
         $this->hideSensitiveRequestDetails();
 
         $isLocal = $this->app->environment('local');
@@ -55,10 +71,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewTelescope', function ($user = null) {
+            // Allow access in production if TELESCOPE_ENABLED_IN_PROD is true
+            return app()->environment('local') || config('telescope.enabled_in_prod', env('TELESCOPE_ENABLED_IN_PROD', false));
         });
     }
 }
