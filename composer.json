@@ -1,5 +1,5 @@
 {
-    "name": "kartmax/telescope-s3",
+    "name": "kartmax/telescope",
     "description": "A fork of Laravel Telescope fine tuned for KartmaX",
     "keywords": ["laravel", "monitoring", "debugging", "s3 logs", "s3"],
     "license": "MIT",
@@ -7,6 +7,10 @@
         {
             "name": "Sagar Chauhan",
             "email": "coolsagar005@gmail.com"
+        },
+        {
+            "name": "KartmaX",
+            "email": "tech@kartmax.in"
         }
     ],
     "require": {
