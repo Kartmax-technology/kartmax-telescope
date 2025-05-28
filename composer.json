@@ -1,6 +1,6 @@
 {
-    "name": "sagar-chauhan-laravel/telescope-s3",
-    "description": "An elegant debug assistant for the Laravel framework.",
+    "name": "kartmax/telescope-s3",
+    "description": "A fork of Laravel Telescope fine tuned for KartmaX",
     "keywords": ["laravel", "monitoring", "debugging", "s3 logs", "s3"],
     "license": "MIT",
     "authors": [
