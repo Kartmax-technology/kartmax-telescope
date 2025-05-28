@@ -20,11 +20,13 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
     protected $disk;
     protected $directory;
     protected $monitoredTags;
+    protected $monitoredTagsFile = 'monitored-tags.json';
 
     public function __construct(string $disk, string $directory)
     {
         $this->disk = $disk;
         $this->directory = trim($directory, '/');
+        $this->monitoredTagsFile = $this->directory . '/' . $this->monitoredTagsFile;
     }
 
     protected function entryPath($type, $batchId, $uuid)
@@ -79,28 +81,46 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
 
     public function loadMonitoredTags()
     {
-        // Optional: implement if you want to persist monitored tags in S3
-        $this->monitoredTags = [];
+        if (Storage::disk($this->disk)->exists($this->monitoredTagsFile)) {
+            $tags = json_decode(Storage::disk($this->disk)->get($this->monitoredTagsFile), true);
+            $this->monitoredTags = is_array($tags) ? $tags : [];
+        } else {
+            $this->monitoredTags = [];
+        }
     }
 
     public function isMonitoring(array $tags)
     {
-        return !empty(array_intersect($tags, $this->monitoredTags ?? []));
+        if ($this->monitoredTags === null) {
+            $this->loadMonitoredTags();
+        }
+        return !empty(array_intersect($tags, $this->monitoredTags));
     }
 
     public function monitoring()
     {
-        return $this->monitoredTags ?? [];
+        if ($this->monitoredTags === null) {
+            $this->loadMonitoredTags();
+        }
+        return $this->monitoredTags;
     }
 
     public function monitor(array $tags)
     {
-        $this->monitoredTags = array_unique(array_merge($this->monitoredTags ?? [], $tags));
+        if ($this->monitoredTags === null) {
+            $this->loadMonitoredTags();
+        }
+        $this->monitoredTags = array_unique(array_merge($this->monitoredTags, $tags));
+        Storage::disk($this->disk)->put($this->monitoredTagsFile, json_encode(array_values($this->monitoredTags)));
     }
 
     public function stopMonitoring(array $tags)
     {
-        $this->monitoredTags = array_diff($this->monitoredTags ?? [], $tags);
+        if ($this->monitoredTags === null) {
+            $this->loadMonitoredTags();
+        }
+        $this->monitoredTags = array_values(array_diff($this->monitoredTags, $tags));
+        Storage::disk($this->disk)->put($this->monitoredTagsFile, json_encode($this->monitoredTags));
     }
 
     public function prune(DateTimeInterface $before, $keepExceptions)
