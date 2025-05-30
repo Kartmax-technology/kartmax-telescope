@@ -48,7 +48,7 @@ export default {
             return d.toISOString().slice(0, 10);
         },
         fetchStats() {
-            axios.get(`/telescope-api/home-stats?date=${this.date}`)
+            axios.get(window.Telescope.basePath + '/telescope-api/home-stats?date=' + this.date)
                 .then(res => {
                     this.stats = res.data;
                 })
