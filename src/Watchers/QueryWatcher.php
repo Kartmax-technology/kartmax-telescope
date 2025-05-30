@@ -46,6 +46,11 @@ class QueryWatcher extends Watcher
                 'line' => $caller['line'],
                 'hash' => $this->familyHash($event),
             ])->tags($this->tags($event)));
+            
+            // Increment daily stats
+            try {
+                app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('queries');
+            } catch (\Throwable $e) {}
         }
     }
 

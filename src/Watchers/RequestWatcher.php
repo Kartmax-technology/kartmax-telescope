@@ -59,6 +59,11 @@ class RequestWatcher extends Watcher
             'duration' => $startTime ? floor((microtime(true) - $startTime) * 1000) : null,
             'memory' => round(memory_get_peak_usage(true) / 1024 / 1024, 1),
         ]));
+        
+        // Increment daily stats
+        try {
+            app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('requests');
+        } catch (\Throwable $e) {}
     }
 
     /**

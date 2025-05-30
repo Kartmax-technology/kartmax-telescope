@@ -216,4 +216,10 @@ export default [
         name: 'client-requests',
         component: require('./screens/client-requests/index').default,
     },
+
+    {
+        path: '/home',
+        name: 'home',
+        component: require('./screens/home/index').default,
+    },
 ];

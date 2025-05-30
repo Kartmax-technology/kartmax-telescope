@@ -105,6 +105,11 @@ class JobWatcher extends Watcher
         ));
 
         $this->updateBatch($event->job->payload());
+
+        // Increment daily stats
+        try {
+            app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('jobs');
+        } catch (\Throwable $e) {}
     }
 
     /**
@@ -138,6 +143,11 @@ class JobWatcher extends Watcher
         )->addTags(['failed']));
 
         $this->updateBatch($event->job->payload());
+
+        // Increment daily stats
+        try {
+            app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('jobs');
+        } catch (\Throwable $e) {}
     }
 
     /**

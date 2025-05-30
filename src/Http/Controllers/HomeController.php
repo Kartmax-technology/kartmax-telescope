@@ -4,6 +4,8 @@ namespace Laravel\Telescope\Http\Controllers;
 
 use Illuminate\Routing\Controller;
 use Laravel\Telescope\Telescope;
+use Illuminate\Http\Request;
+use Laravel\Telescope\Storage\S3DailyStatsService;
 
 class HomeController extends Controller
 {
@@ -18,5 +20,11 @@ class HomeController extends Controller
             'cssFile' => Telescope::$useDarkTheme ? 'app-dark.css' : 'app.css',
             'telescopeScriptVariables' => Telescope::scriptVariables(),
         ]);
+    }
+
+    public function stats(Request $request)
+    {
+        $date = $request->input('date');
+        return response()->json(app(S3DailyStatsService::class)->getStats($date));
     }
 }

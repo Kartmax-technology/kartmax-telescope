@@ -47,6 +47,11 @@ class MailWatcher extends Watcher
             'html' => $body instanceof AbstractPart ? ($event->message->getHtmlBody() ?? $event->message->getTextBody()) : $body,
             'raw' => $event->message->toString(),
         ])->tags($this->tags($event->message, $event->data)));
+        
+        // Increment daily stats
+        try {
+            app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('mails');
+        } catch (\Throwable $e) {}
     }
 
     /**

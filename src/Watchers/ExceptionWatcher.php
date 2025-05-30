@@ -54,6 +54,11 @@ class ExceptionWatcher extends Watcher
                 'line_preview' => ExceptionContext::get($exception),
             ])->tags($this->tags($event))
         );
+        
+        // Increment daily stats
+        try {
+            app(\Laravel\Telescope\Storage\S3DailyStatsService::class)->increment('exceptions');
+        } catch (\Throwable $e) {}
     }
 
     /**
