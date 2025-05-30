@@ -1,5 +1,5 @@
 export default [
-    { path: '/', redirect: '/requests' },
+    { path: '/', redirect: '/home' },
 
     {
         path: '/mail/:id',
