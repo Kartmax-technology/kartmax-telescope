@@ -40,6 +40,7 @@ KartmnaX Telescope can be configured using the following environment variables:
 
 ## Custom Tags
 
+
 You can attach custom tags to every entry using the following configuration:
 
 - `TELESCOPE_CUSTOM_STATIC_TAG`: A static string tag (e.g., service name)
