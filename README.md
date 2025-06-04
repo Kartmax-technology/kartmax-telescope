@@ -38,41 +38,6 @@ Ensure your `config/filesystems.php` is configured for your S3 disk.
 
 KartmnaX Telescope can be configured using the following environment variables:
 
-```env
-TELESCOPE_ENABLED=true                # Master switch
-TELESCOPE_DOMAIN=                     # Subdomain for Telescope
-TELESCOPE_PATH=telescope              # URI path
-TELESCOPE_DRIVER=database|s3          # Storage driver
-TELESCOPE_S3_DISK=s3                  # S3 disk name
-TELESCOPE_S3_DIRECTORY=telescope      # S3 directory/prefix
-TELESCOPE_QUEUE_CONNECTION=           # Queue connection
-TELESCOPE_QUEUE=                      # Queue name
-TELESCOPE_QUEUE_DELAY=10              # Queue delay (seconds)
-TELESCOPE_BATCH_WATCHER=true
-TELESCOPE_CACHE_WATCHER=true
-TELESCOPE_CLIENT_REQUEST_WATCHER=true
-TELESCOPE_COMMAND_WATCHER=true
-TELESCOPE_DUMP_WATCHER=true
-TELESCOPE_DUMP_WATCHER_ALWAYS=false
-TELESCOPE_EVENT_WATCHER=true
-TELESCOPE_EXCEPTION_WATCHER=true
-TELESCOPE_GATE_WATCHER=true
-TELESCOPE_JOB_WATCHER=true
-TELESCOPE_LOG_WATCHER=true
-TELESCOPE_MAIL_WATCHER=true
-TELESCOPE_MODEL_WATCHER=true
-TELESCOPE_NOTIFICATION_WATCHER=true
-TELESCOPE_QUERY_WATCHER=true
-TELESCOPE_REDIS_WATCHER=true
-TELESCOPE_REQUEST_WATCHER=true
-TELESCOPE_RESPONSE_SIZE_LIMIT=64
-TELESCOPE_SCHEDULE_WATCHER=true
-TELESCOPE_VIEW_WATCHER=true
-TELESCOPE_CUSTOM_STATIC_TAG=service   # Custom static tag for all entries
-TELESCOPE_CUSTOM_DYNAMIC_TAG=site_token # Class name for dynamic tag
-TELESCOPE_ENABLED_IN_PROD=false       # Enable in production
-```
-
 ## Custom Tags
 
 You can attach custom tags to every entry using the following configuration:
