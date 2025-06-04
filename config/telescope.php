@@ -7,6 +7,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Telescope Master Switch
+    |--------------------------------------------------------------------------
+    |
+    | This option may be used to disable all Telescope watchers regardless
+    | of their individual configuration, which simply provides a single
+    | and convenient way to enable or disable Telescope data storage.
+    |
+    */
+
+    'enabled' => env('TELESCOPE_ENABLED', true),
+
+    /*
+    |--------------------------------------------------------------------------
     | Telescope Domain
     |--------------------------------------------------------------------------
     |
@@ -49,20 +62,28 @@ return [
             'connection' => env('DB_CONNECTION', 'mysql'),
             'chunk' => 1000,
         ],
+        's3' => [
+            'disk' => env('TELESCOPE_S3_DISK', 's3'),
+            'directory' => env('TELESCOPE_S3_DIRECTORY', 'telescope'),
+        ],
     ],
 
     /*
     |--------------------------------------------------------------------------
-    | Telescope Master Switch
+    | Telescope Queue
     |--------------------------------------------------------------------------
     |
-    | This option may be used to disable all Telescope watchers regardless
-    | of their individual configuration, which simply provides a single
-    | and convenient way to enable or disable Telescope data storage.
+    | This configuration options determines the queue connection and queue
+    | which will be used to process ProcessPendingUpdate jobs. This can
+    | be changed if you would prefer to use a non-default connection.
     |
     */
 
-    'enabled' => env('TELESCOPE_ENABLED', true),
+    'queue' => [
+        'connection' => env('TELESCOPE_QUEUE_CONNECTION', null),
+        'queue' => env('TELESCOPE_QUEUE', null),
+        'delay' => env('TELESCOPE_QUEUE_DELAY', 10),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -122,6 +143,7 @@ return [
         Watchers\CacheWatcher::class => [
             'enabled' => env('TELESCOPE_CACHE_WATCHER', true),
             'hidden' => [],
+            'ignore' => [],
         ],
 
         Watchers\ClientRequestWatcher::class => env('TELESCOPE_CLIENT_REQUEST_WATCHER', true),
@@ -186,4 +208,18 @@ return [
         Watchers\ScheduleWatcher::class => env('TELESCOPE_SCHEDULE_WATCHER', true),
         Watchers\ViewWatcher::class => env('TELESCOPE_VIEW_WATCHER', true),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Tags for Entries
+    |--------------------------------------------------------------------------
+    |
+    | You may specify custom tags to be attached to every Telescope entry.
+    | 'custom_static_tag' is a string tag, and 'custom_dynamic_tag' is a class
+    | name that will be resolved from the container and its value used as a tag.
+    |
+    */
+    'custom_static_tag' => env('TELESCOPE_CUSTOM_STATIC_TAG', 'service'),
+    'custom_dynamic_tag' => env('TELESCOPE_CUSTOM_DYNAMIC_TAG', 'site_token'),
+    'enabled_in_prod' => env('TELESCOPE_ENABLED_IN_PROD', false),
 ];

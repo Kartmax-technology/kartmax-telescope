@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Gate;
 use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
+use Laravel\Telescope\Watchers\AppInstanceTagWatcher;
 
 class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 {
@@ -15,6 +16,27 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
     public function register(): void
     {
         // Telescope::night();
+
+        Telescope::tag(function (IncomingEntry $entry) {
+            $tags = [];
+            $staticTag = config('telescope.custom_static_tag', env('TELESCOPE_CUSTOM_STATIC_TAG'));
+            if ($staticTag) {
+                $tags[] = $staticTag;
+            }
+
+            // Get the dynamic tag key from config/env
+            $dynamicTagKey = config('telescope.custom_dynamic_tag_key', env('TELESCOPE_DYNAMIC_TAG_KEY', 'site_token'));
+            if ($dynamicTagKey && app()->bound($dynamicTagKey)) {
+                $tags[] = app($dynamicTagKey);
+            }
+
+            // Add the current URL path as a tag
+            if (request()->path()) {
+                $tags[] = 'path:' . request()->path();
+            }
+            
+            return $tags;
+        });
 
         $this->hideSensitiveRequestDetails();
 
@@ -55,10 +77,9 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function gate(): void
     {
-        Gate::define('viewTelescope', function ($user) {
-            return in_array($user->email, [
-                //
-            ]);
+        Gate::define('viewTelescope', function ($user = null) {
+            // Allow access in production if TELESCOPE_ENABLED_IN_PROD is true
+            return app()->environment('local') || config('telescope.enabled_in_prod', env('TELESCOPE_ENABLED_IN_PROD', false));
         });
     }
 }
