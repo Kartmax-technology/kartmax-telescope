@@ -123,7 +123,7 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
         Storage::disk($this->disk)->put($this->monitoredTagsFile, json_encode($this->monitoredTags));
     }
 
-    public function prune(DateTimeInterface $before, $keepExceptions)
+    public function prune(DateTimeInterface $before)
     {
         $files = Storage::disk($this->disk)->allFiles($this->directory);
         $deleted = 0;
@@ -132,7 +132,6 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
             $data = json_decode(Storage::disk($this->disk)->get($file), true);
             $createdAt = Carbon::parse($data['created_at'] ?? null);
             if ($createdAt->lt($before)) {
-                if ($keepExceptions && ($data['type'] ?? null) === 'exception') continue;
                 Storage::disk($this->disk)->delete($file);
                 $deleted++;
             }
