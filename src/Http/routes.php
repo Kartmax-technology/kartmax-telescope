@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Laravel\Telescope\Http\Controllers\HomeController;
 
 // Mail entries...
 Route::post('/telescope-api/mail', 'MailController@index');
@@ -87,7 +88,7 @@ Route::post('/telescope-api/toggle-recording', 'RecordingController@toggle');
 // Clear Entries...
 Route::delete('/telescope-api/entries', 'EntriesController@destroy');
 
-Route::get('/telescope-api/home-stats', [HomeController::class, 'stats']);
+Route::get('/telescope-api/home-stats', 'HomeController@stats');
 
 
 Route::get('/{view?}', 'HomeController@index')->where('view', '(.*)')->name('telescope');

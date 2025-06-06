@@ -45,7 +45,7 @@ class DumpWatcher extends Watcher
 
         try {
             $dumpWatcherCache = $this->cache->get('telescope:dump-watcher');
-        } catch (Exception) {
+        } catch (Exception $e) {
             //
         }
 
