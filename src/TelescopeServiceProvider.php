@@ -179,6 +179,41 @@ class TelescopeServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register the package S3 storage driver.
+     *
+     * @return void
+     */
+    protected function registerS3Driver()
+    {
+        $this->app->singleton(
+            EntriesRepository::class,
+            function ($app) {
+                $disk = config('telescope.storage.s3.disk', 's3');
+                $directory = config('telescope.storage.s3.directory', 'telescope');
+                return new \Laravel\Telescope\Storage\S3EntriesRepository($disk, $directory);
+            }
+        );
+
+        $this->app->singleton(
+            ClearableRepository::class,
+            function ($app) {
+                $disk = config('telescope.storage.s3.disk', 's3');
+                $directory = config('telescope.storage.s3.directory', 'telescope');
+                return new \Laravel\Telescope\Storage\S3EntriesRepository($disk, $directory);
+            }
+        );
+
+        $this->app->singleton(
+            PrunableRepository::class,
+            function ($app) {
+                $disk = config('telescope.storage.s3.disk', 's3');
+                $directory = config('telescope.storage.s3.directory', 'telescope');
+                return new \Laravel\Telescope\Storage\S3EntriesRepository($disk, $directory);
+            }
+        );
+    }
+
+    /**
      * Determine if we should register the migrations.
      *
      * @return bool
