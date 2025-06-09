@@ -14,6 +14,7 @@ use Laravel\Telescope\IncomingEntry;
 use Laravel\Telescope\EntryUpdate;
 use Laravel\Telescope\Storage\EntryQueryOptions;
 use Carbon\Carbon;
+use Laravel\Telescope\Storage\S3DailyStatsService;
 
 class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepository, TerminableRepository
 {
@@ -21,12 +22,14 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
     protected $directory;
     protected $monitoredTags;
     protected $monitoredTagsFile = 'monitored-tags.json';
+    protected $statsService;
 
-    public function __construct(string $disk, string $directory)
+    public function __construct(string $disk, string $directory, ?S3DailyStatsService $statsService = null)
     {
         $this->disk = $disk;
         $this->directory = trim($directory, '/');
         $this->monitoredTagsFile = $this->directory . '/' . $this->monitoredTagsFile;
+        $this->statsService = $statsService ?? app(S3DailyStatsService::class);
     }
 
     protected function entryPath($type, $batchId, $uuid)
@@ -70,6 +73,11 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
         foreach ($entries as $entry) {
             $filePath = $this->entryPath($entry->type, $entry->batchId, $entry->uuid);
             Storage::disk($this->disk)->put($filePath, json_encode($entry->toArray()));
+            
+            // Only increment stats if statsService is available
+            if ($this->statsService) {
+                $this->statsService->increment($entry->type);
+            }
         }
     }
 

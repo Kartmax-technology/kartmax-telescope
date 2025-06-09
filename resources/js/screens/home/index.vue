@@ -27,17 +27,17 @@ export default {
         return {
             date: this.today(),
             stats: {
-                requests: 0,
+                request: 0,
                 jobs: 0,
-                exceptions: 0,
-                mails: 0,
+                exception: 0,
+                mail: 0,
                 queries: 0,
             },
             statCards: [
-                { key: 'requests', label: 'Requests' },
+                { key: 'request', label: 'Requests' },
                 { key: 'jobs', label: 'Jobs' },
-                { key: 'exceptions', label: 'Exceptions' },
-                { key: 'mails', label: 'Mails' },
+                { key: 'exception', label: 'Exceptions' },
+                { key: 'mail', label: 'Mails' },
                 { key: 'queries', label: 'Queries' },
             ],
         };
@@ -54,10 +54,10 @@ export default {
                 })
                 .catch(() => {
                     this.stats = {
-                        requests: 0,
+                        request: 0,
                         jobs: 0,
-                        exceptions: 0,
-                        mails: 0,
+                        exception: 0,
+                        mail: 0,
                         queries: 0,
                     };
                 });

@@ -27,10 +27,10 @@ class S3DailyStatsService
         $path = $this->getStatsPath($date);
         $stats = [
             'date' => $date,
-            'requests' => 0,
+            'request' => 0,
             'jobs' => 0,
-            'exceptions' => 0,
-            'mails' => 0,
+            'exception' => 0,
+            'mail' => 0,
             'queries' => 0,
         ];
         if (Storage::disk($this->disk)->exists($path)) {
@@ -51,10 +51,10 @@ class S3DailyStatsService
         }
         return [
             'date' => $date,
-            'requests' => 0,
+            'request' => 0,
             'jobs' => 0,
-            'exceptions' => 0,
-            'mails' => 0,
+            'exception' => 0,
+            'mail' => 0,
             'queries' => 0,
         ];
     }

@@ -5,6 +5,7 @@ namespace Laravel\Telescope\Http\Controllers;
 use Illuminate\Routing\Controller;
 use Laravel\Telescope\Telescope;
 use Laravel\Telescope\Storage\S3DailyStatsService;
+use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
