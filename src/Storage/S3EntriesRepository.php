@@ -86,12 +86,12 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
             $filePath = $this->entryPath($entry->type, $entry->batchId, $entry->uuid);
             $content = json_encode($entry->toArray());
             
-            // Create async upload promise
+            // Create async upload promise - remove getResult() since putObject() already returns a result
             $promises[] = $this->s3Client->putObject([
                 'Bucket' => config('filesystems.disks.' . $this->disk . '.bucket'),
                 'Key' => $filePath,
                 'Body' => $content,
-            ])->getResult();
+            ]);
             
             // Only increment stats if statsService is available
             if ($this->statsService) {
