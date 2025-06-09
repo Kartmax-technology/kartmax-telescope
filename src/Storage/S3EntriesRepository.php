@@ -15,6 +15,8 @@ use Laravel\Telescope\EntryUpdate;
 use Laravel\Telescope\Storage\EntryQueryOptions;
 use Carbon\Carbon;
 use Laravel\Telescope\Storage\S3DailyStatsService;
+use AsyncAws\S3\S3Client;
+use AsyncAws\Core\Result;
 
 class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepository, TerminableRepository
 {
@@ -23,6 +25,7 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
     protected $monitoredTags;
     protected $monitoredTagsFile = 'monitored-tags.json';
     protected $statsService;
+    protected $s3Client;
 
     public function __construct(string $disk, string $directory, ?S3DailyStatsService $statsService = null)
     {
@@ -30,6 +33,13 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
         $this->directory = trim($directory, '/');
         $this->monitoredTagsFile = $this->directory . '/' . $this->monitoredTagsFile;
         $this->statsService = $statsService ?? app(S3DailyStatsService::class);
+        
+        // Initialize AsyncAws S3 client
+        $this->s3Client = new S3Client([
+            'region' => config('filesystems.disks.' . $disk . '.region'),
+            'accessKeyId' => config('filesystems.disks.' . $disk . '.key'),
+            'accessKeySecret' => config('filesystems.disks.' . $disk . '.secret'),
+        ]);
     }
 
     protected function entryPath($type, $batchId, $uuid)
@@ -70,15 +80,27 @@ class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepo
 
     public function store(Collection $entries)
     {
+        $promises = [];
+        
         foreach ($entries as $entry) {
             $filePath = $this->entryPath($entry->type, $entry->batchId, $entry->uuid);
-            Storage::disk($this->disk)->put($filePath, json_encode($entry->toArray()));
+            $content = json_encode($entry->toArray());
+            
+            // Create async upload promise
+            $promises[] = $this->s3Client->putObject([
+                'Bucket' => config('filesystems.disks.' . $this->disk . '.bucket'),
+                'Key' => $filePath,
+                'Body' => $content,
+            ])->getResult();
             
             // Only increment stats if statsService is available
             if ($this->statsService) {
                 $this->statsService->increment($entry->type);
             }
         }
+        
+        // Wait for all uploads to complete
+        Result::wait($promises);
     }
 
     public function update(Collection $updates)
