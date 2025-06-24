@@ -27,6 +27,9 @@ class TelescopeServiceProvider extends ServiceProvider
 
         Route::middlewareGroup('telescope', config('telescope.middleware', []));
 
+        // Register the cache control middleware
+        $this->app['router']->aliasMiddleware('cache.control', \Laravel\Telescope\Http\Middleware\CacheControl::class);
+
         $this->registerRoutes();
         $this->registerMigrations();
 
