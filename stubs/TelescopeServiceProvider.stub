@@ -19,37 +19,59 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
 
         Telescope::tag(function (IncomingEntry $entry) {
             $tags = [];
+            
+            // Static tag from config/env
             $staticTag = config('telescope.custom_static_tag', env('TELESCOPE_CUSTOM_STATIC_TAG'));
             if ($staticTag) {
                 $tags[] = $staticTag;
+                //info("Added static tag", [$staticTag]);
             }
 
-            // Get the dynamic tag key from config/env
+            // Dynamic tag from service container
             $dynamicTagKey = config('telescope.custom_dynamic_tag_key', env('TELESCOPE_DYNAMIC_TAG_KEY', 'site_token'));
             if ($dynamicTagKey && app()->bound($dynamicTagKey)) {
-                $tags[] = app($dynamicTagKey);
+                $dynamicValue = app($dynamicTagKey);
+                $tags[] = $dynamicValue;
+                //info("Added dynamic tag", [$dynamicValue]);
             }
 
             // Add the current URL path as a tag
             if (request()->path()) {
-                $tags[] = 'path:' . request()->path();
+                $pathTag = 'path:' . request()->path();
+                $tags[] = $pathTag;
+                //info("Added path tag", [$pathTag]);
             }
+            
+            // Add entry type tag for easier filtering
+            $tags[] = 'type:' . $entry->type;
+            
+            // Add authenticated user tag if available
+            if (auth()->check()) {
+                $tags[] = 'user:' . auth()->id();
+            }
+            
+            // info("Final tags for entry", [
+            //     'entry_type' => $entry->type,
+            //     'entry_uuid' => $entry->uuid,
+            //     'tags' => $tags
+            // ]);
             
             return $tags;
         });
 
-        $this->hideSensitiveRequestDetails();
-
-        $isLocal = $this->app->environment('local');
-
-        Telescope::filter(function (IncomingEntry $entry) use ($isLocal) {
-            return $isLocal ||
-                   $entry->isReportableException() ||
-                   $entry->isFailedRequest() ||
-                   $entry->isFailedJob() ||
-                   $entry->isScheduledTask() ||
-                   $entry->hasMonitoredTag();
+        // Add filter to ensure entries with tags are recorded
+        Telescope::filter(function (IncomingEntry $entry) {
+            
+            // In production, record entries with monitored tags or important events
+            return $entry->isReportableException() 
+                || $entry->isFailedJob() 
+                || $entry->isScheduledTask() 
+                || $entry->isSlowQuery() 
+                || $entry->hasMonitoredTag()
+                || !empty($entry->tags); // Record any entry that has tags
         });
+
+        $this->hideSensitiveRequestDetails();
     }
 
     /**
@@ -57,10 +79,6 @@ class TelescopeServiceProvider extends TelescopeApplicationServiceProvider
      */
     protected function hideSensitiveRequestDetails(): void
     {
-        if ($this->app->environment('local')) {
-            return;
-        }
-
         Telescope::hideRequestParameters(['_token']);
 
         Telescope::hideRequestHeaders([
