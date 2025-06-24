@@ -99,6 +99,7 @@ return [
     'middleware' => [
         'web',
         Authorize::class,
+        \Laravel\Telescope\Http\Middleware\CacheControl::class,
     ],
 
     /*
