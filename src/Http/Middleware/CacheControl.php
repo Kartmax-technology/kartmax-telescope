@@ -5,6 +5,7 @@ namespace Laravel\Telescope\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class CacheControl
 {
@@ -63,7 +64,7 @@ class CacheControl
         // 3. Default TTL (from env or fallback)
         $cacheDuration = $ttl ?? $this->getRouteTtl($request) ?? $this->defaultTtl;
 
-        if ($response instanceof Response) {
+        if ($response instanceof SymfonyResponse) {
             $response->headers->add([
                 'Cache-Control' => 'public, max-age=' . $cacheDuration,
                 'Expires' => gmdate('D, d M Y H:i:s', time() + $cacheDuration) . ' GMT',
@@ -72,6 +73,8 @@ class CacheControl
             ]);
         }
 
+        // info("CacheControl",[$cacheDuration]);
+        // info("Response",[$response]);
         return $response;
     }
 
