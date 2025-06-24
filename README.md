@@ -38,8 +38,25 @@ Ensure your `config/filesystems.php` is configured for your S3 disk.
 
 KartmnaX Telescope can be configured using the following environment variables:
 
-## Custom Tags
+```env
+# Enable/Disable Telescope
+TELESCOPE_ENABLED=true
 
+# Storage Configuration
+TELESCOPE_DRIVER=s3
+TELESCOPE_S3_DISK=s3           # The Laravel disk to use (default: s3)
+TELESCOPE_S3_DIRECTORY=telescope # The directory/prefix in the bucket (default: telescope)
+
+# Custom Tags Configuration
+TELESCOPE_CUSTOM_STATIC_TAG='your service name'    # Static tag for all entries (e.g., service name)
+TELESCOPE_CUSTOM_DYNAMIC_TAG='any dynamic app instance'  # Dynamic tag for entries (e.g., instance ID)
+
+# Production and Performance Settings
+TELESCOPE_ENABLED_IN_PROD=true  # Enable Telescope in production environment
+TELESCOPE_CACHE_TTL=60         # Cache TTL in seconds for Telescope entries
+```
+
+## Custom Tags
 
 You can attach custom tags to every entry using the following configuration:
 
