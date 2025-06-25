@@ -16,7 +16,7 @@ use Laravel\Telescope\Storage\EntryQueryOptions;
 use Carbon\Carbon;
 use Aws\S3\S3Client;
 use Illuminate\Support\Facades\Log;
-use Laravel\Telescope\Services\S3DailyStatsService;
+use Laravel\Telescope\Storage\S3DailyStatsService;
 
 class S3EntriesRepository implements Contract, ClearableRepository, PrunableRepository, TerminableRepository
 {
