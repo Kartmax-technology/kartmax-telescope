@@ -79,7 +79,7 @@ Route::post('/telescope-api/client-requests', 'ClientRequestController@index');
 Route::get('/telescope-api/client-requests/{telescopeEntryId}', 'ClientRequestController@show')->middleware('cache.control:14400');
 
 // Monitored Tags...
-Route::get('/telescope-api/monitored-tags', 'MonitoredTagController@index')->middleware('cache.control:14400');
+Route::get('/telescope-api/monitored-tags', 'MonitoredTagController@index')->middleware('cache.control:120');
 Route::post('/telescope-api/monitored-tags/', 'MonitoredTagController@store');
 Route::post('/telescope-api/monitored-tags/delete', 'MonitoredTagController@destroy');
 
@@ -89,7 +89,7 @@ Route::post('/telescope-api/toggle-recording', 'RecordingController@toggle');
 // Clear Entries...
 Route::delete('/telescope-api/entries', 'EntriesController@destroy');
 
-Route::get('/telescope-api/home-stats', 'HomeController@stats')->middleware('cache.control:14400');
+Route::get('/telescope-api/home-stats', 'HomeController@stats')->middleware('cache.control:300');
 
 
 Route::get('/{view?}', 'HomeController@index')->where('view', '(.*)')->name('telescope');

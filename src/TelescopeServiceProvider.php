@@ -200,18 +200,14 @@ class TelescopeServiceProvider extends ServiceProvider
         $this->app->singleton(
             ClearableRepository::class,
             function ($app) {
-                $disk = config('telescope.storage.s3.disk', 's3');
-                $directory = config('telescope.storage.s3.directory', 'telescope');
-                return new \Laravel\Telescope\Storage\S3EntriesRepository($disk, $directory);
+                return $app->make(EntriesRepository::class);
             }
         );
 
         $this->app->singleton(
             PrunableRepository::class,
             function ($app) {
-                $disk = config('telescope.storage.s3.disk', 's3');
-                $directory = config('telescope.storage.s3.directory', 'telescope');
-                return new \Laravel\Telescope\Storage\S3EntriesRepository($disk, $directory);
+                return $app->make(EntriesRepository::class);
             }
         );
     }
